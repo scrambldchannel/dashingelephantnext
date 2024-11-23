@@ -1,9 +1,9 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
   title: 'My tech musings',
-  author: 'Tails Azimuth',
+  author: 'Alexander Sutcliffe',
   headerTitle: 'Dashing Elephant',
-  description: 'The tech musings of Alexander Sutcliffe',
+  description: 'The tech musings of a grizzled data guy',
   language: 'en-uk',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
