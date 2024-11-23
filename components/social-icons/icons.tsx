@@ -30,5 +30,3 @@ export function Mail(svgProps: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
-
-

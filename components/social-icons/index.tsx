@@ -1,8 +1,4 @@
-import {
-  Mail,
-  Github,
-  Linkedin,
-} from './icons'
+import { Mail, Github, Linkedin } from './icons'
 
 const components = {
   mail: Mail,
