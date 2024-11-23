@@ -13,19 +13,25 @@ tags:
   - tm1py
 ---
 
+> [!NOTE]
+> I no longer work with TM1 nor is it likely I will again. I've left these posts here for posterity though.
+
+
+## Can Pytest help test TM1 models?
+
 I wanted an excuse to explore TM1py in more depth and had been thinking for a while about the possibilities offered by using a test framework like pytest to run automated tests of a TM1 model. This is really a quick proof of concept to gauge how feasible it might prove.
 
 ### Environment setup
 
 TM1py requires python 3.6 or greater and can be installed using pip:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 pip install TM1py
 ```
 
 We also need pytest to run our tests:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 pip install pytest
 ```
 
@@ -37,7 +43,7 @@ A pytest file is just a simple python script and tests can be straightforward ea
 
 I created a file and added the following lines of code:
 
-```python{codeTitle: "test_poc.py"}
+```python
 import pytest
 import json
 from TM1py.Services import TM1Service
@@ -57,7 +63,7 @@ This imports a few things, reads a config file with connection details and then 
 
 Here is an example of how the connection settings might look:
 
-```json{codeTitle: "connection_settings.py"}
+```json
 {
     "tm1_dev" : {
         "address" : "localhost",
@@ -73,7 +79,7 @@ Here is an example of how the connection settings might look:
 
 Tests essentially run a bit of code and then make sure the result is within the desired parameters based on the input. The tests themselves don't do anything particularly interesting but illustrate the idea. Note each of these take the the `tm1_dev` fixture as an argument so can access its methods for communicating with TM1 API.
 
-```python{codeTitle: "test_poc.py"}
+```python
 def test_cube_exists(tm1_dev):
     assert tm1_dev.cubes.exists("}ClientGroups")
 
@@ -88,7 +94,7 @@ def test_value(tm1_dev):
 
 The tests can now be run from the command line with:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 $ pytest ./test_poc.py
 ```
 
