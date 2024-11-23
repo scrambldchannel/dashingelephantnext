@@ -1,21 +1,20 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Next.js Starter Blog',
+  title: 'My tech musings',
   author: 'Tails Azimuth',
-  headerTitle: 'TailwindBlog',
-  description: 'A blog created with Next.js and Tailwind.css',
-  language: 'en-us',
+  headerTitle: 'Dashing Elephant',
+  description: 'The tech musings of Alexander Sutcliffe',
+  language: 'en-uk',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: 'https://mastodon.social/@mastodonuser',
-  email: 'address@yoursite.com',
-  github: 'https://github.com',
-  x: 'https://twitter.com/x',
+  email: 'alex@dashingelephant.xyz',
+  github: 'https://github.com/scrambldchannel',
   // twitter: 'https://twitter.com/Twitter',
-  linkedin: 'https://www.linkedin.com',
+  linkedin: 'https://www.linkedin.com/in/alexander-sutcliffe-b56921166/',
   locale: 'en-DE',
   // set to true if you want a navbar fixed to the top
   stickyNav: true,
