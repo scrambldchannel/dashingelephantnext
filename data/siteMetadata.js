@@ -10,10 +10,8 @@ const siteMetadata = {
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
-  mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'alex@dashingelephant.xyz',
   github: 'https://github.com/scrambldchannel',
-  // twitter: 'https://twitter.com/Twitter',
   linkedin: 'https://www.linkedin.com/in/alexander-sutcliffe-b56921166/',
   locale: 'en-DE',
   // set to true if you want a navbar fixed to the top
