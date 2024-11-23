@@ -10,7 +10,13 @@ tags:
   - prismjs
   - gridsome
   - vue
+draft: true # Needs to be cleaned up a bit 
 ---
+
+> [!NOTE]
+> I've since moved away from Gridsome but am leaving this here for posterity.
+
+## Making code blocks pretty in Gridsome
 
 I've been playing around with Gridsome for a little while now and have started migrating some content from my old Pelican powered blog. One thing that caused me a few headaches was getting embedded code blocks to be rendered elegantly with syntax highlighting support for a variety of languages.
 
@@ -20,7 +26,7 @@ The first issue was choosing a plugin to handle it. Having checked the list of p
 - [gridsome-plugin-remark-shiki](https://gridsome.org/plugins/gridsome-plugin-remark-shiki)
 - [gridsome-plugin-remark-prismjs-all](https://gridsome.org/plugins/gridsome-plugin-remark-prismjs-all)
 
-### @gridsome/remark-prismjs
+## @gridsome/remark-prismjs
 
 Going by nothing other than the download numbers, I thought I'd try the prismjs version. I also noted that it seemed to be part of Gridsome core and the docs were pretty clear. I updated my `main.js` and `gridsome.config.js` as follows:
 
@@ -58,7 +64,7 @@ module.exports = {
 
 This worked as expected when using the default theme but I didn't really like the look and wanted a dark theme. However, switching the theme to `prism-twilight` left me with illegible text. The same was true for other dark themes, I ended up with some weird white gradient that looked awful. I'm guessing this was down to something in the css and maybe a conflict with the css from the theme I was using. Try as I might, I couldn't get it to work so decided to try something else.
 
-### gridsome-plugin-remark-shiki
+## gridsome-plugin-remark-shiki
 
 This plugin uses the shiki library to do the highlighting. As it's a third-party plugin, I needed to install it to my project.
 
@@ -98,7 +104,7 @@ This worked great on initial testing but then I found an issue with the way code
 
 A good amount of time down the rabbit hole and I found the issue and raised a PR. Just minutes ago, it was merged. I don't think I've contributed to a js project before so this is cause for mild celebration :) It's nice to be able to solve a problem, no matter how simple. Still, I wanted to try the third plugin too as it seemed to provide the ability to add titles and line numbers.
 
-### gridsome-plugin-remark-prismjs-all
+## gridsome-plugin-remark-prismjs-all
 
 This is another third party plugin that uses the library prismjs. It wasn't entirely clear how it differed to the built-in plugin but there is a [good demo application](https://kind-elion-23889d.netlify.app/demo-gridsome-plugin-remark-prismjs-all/) that shows how it can be used with examples of titles, line numbers and line highlighting.
 
