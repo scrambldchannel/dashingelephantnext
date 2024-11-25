@@ -14,17 +14,17 @@ tags:
 
 ## Want to do more with your Strava data?
 
-My earliest memory of analytics is watching my father create Lotus 123 spreadsheets to track and even visualise my sister and I's performances at Little Athletics. I was an average athlete but I was transfixed by the charts. Now we live in the Strava era and there were a couple of questions I had that I couldn't answer without using their API to get at my data.
+My earliest memory of analytics is watching my father create Lotus 123 spreadsheets to track and even visualise the athletic performances of my sister and I. Although an average athlete, I was transfixed by the charts, rudimentary though they were. Now we live in the Strava era and have so much more data to work with! I found there were a couple of questions they didn't answer out of the box so I wanted to play with the API to get at my data.
 
-Fitness apps are all the rage and technologies like GPS mean we can harvest a wealth of data compared to those manually entered and hand-timed results from my youth. I wish I still had those spreadsheets though, in fact, they may even be sitting on a 5 1/4 inch floppy somewhere at my parents' house...
+Fitness apps are all the rage and technologies like GPS mean we can harvest a wealth of data compared to those manually entered and hand-timed results from my youth. I wish I still had those spreadsheets though, in fact, they may even be sitting on a  5¼ floppy somewhere at my parents' house...
 
-Strava provides some high-level stats out of the box, like total distance covered and average distance per week etc. I even signed up to Veloviewer which pulls in your Strava activities and calculates all sorts of metrics and provides some nice visualisations. In particular, I really like its "Explorer score" which tracks how much of the world you've covered by crunching all the geodata you've uploaded (i.e. "donated") to Strava.
+Strava provides some high-level stats out of the box, like total distance covered and average distance per week etc. I even signed up to Veloviewer which pulls in your Strava activities, calculates all sorts of metrics and provides some nice visualisations. In particular, I really like its "Explorer score" which tracks how much of the world you've covered by crunching all the geodata you've uploaded (i.e. "donated") to Strava.
 
-Still, there were a couple of things I wanted to know that I couldn't access out of the box with either tool. For example, a friend of mine was very proud of her running streak in which she ran every day for over a year. I knew I hadn't come close but was curious to learn how long my cycling streak was. I was also curious as to how many different countries I'd recorded activities in.
+Still, there were a couple of things I wanted to know that I couldn't answer with either tool. For example, a friend of mine was very proud of her running streak. Rightly so, as she ran every single day for over a year. I knew I hadn't come close but was curious to learn how long my cycling streak was. I also wanted to know how many countries I'd recorded activities in.
 
 It felt like I should be able to answer these questions pretty easily if I had the raw data itself and being curious about what the Strava API offered, I thought I'd grab a key and try to see what I could extract. I should note that if you just want your data, it's easier to just ask Strava for it but it seemed more fun to do it this way.
 
-To get started, I logged into Strava and created an app. Since I'm just doing this as a one-off, I didn't jump through all the hoops to get a persistent token via OAuth. Iinstead, I just experimented with permissions using the API playground. It means my token expires every few hours but I'm not building an app or a pipeline right now so it doesn't really matter. I saved my token in a .env file and used dotenv to import it.
+To get started, I logged into Strava and created an app. Since I'm just doing this as a one-off, I didn't jump through all the hoops to get a persistent token via OAuth. Instead, I just experimented with permissions using the API playground. It means my token expires every few hours but I'm not building an app or a pipeline right now so it doesn't matter. I saved my token in a .env file and used dotenv to import it.
 
 ```python
 from dotenv import load_dotenv
@@ -34,7 +34,7 @@ load_dotenv()
 token = getenv("STRAVA_ACCESS_TOKEN")
 ```
 
-A number of libraries exist that can assist with connecting to the API but I didn't really investigate them as requests was going to be sufficient for my needs. I also want to use Pandas to do the actual analysis part.
+A number of libraries exist that can assist with connecting to the API but I didn't really investigate them as the requests library was going to be sufficient for my needs. I also want to use Pandas to do the actual analysis part.
 
 ```python
 import requests
@@ -63,13 +63,13 @@ print(
 )
 ```
 
-Which gives me:
+This gives me:
 
 ```text
 Alex rides his bike (mostly) in Berlin these days.
 ```
 
-Using the user id from the last response, it's possible to pull some high-level stats on my less than illustrious athletic career.
+Using the user ID from the last response, it's possible to pull some high-level stats on my less-than-illustrious athletic career.
 
 ```python
 url = (
@@ -103,7 +103,7 @@ activities[0].keys()
 dict_keys(['resource_state', 'athlete', 'name', 'distance', 'moving_time', 'elapsed_time', 'total_elevation_gain', 'type', 'workout_type', 'id', 'external_id', 'upload_id', 'start_date', 'start_date_local', 'timezone', 'utc_offset', 'start_latlng', 'end_latlng', 'location_city', 'location_state', 'location_country', 'start_latitude', 'start_longitude', 'achievement_count', 'kudos_count', 'comment_count', 'athlete_count', 'photo_count', 'map', 'trainer', 'commute', 'manual', 'private', 'visibility', 'flagged', 'gear_id', 'from_accepted_tag', 'upload_id_str', 'average_speed', 'max_speed', 'average_watts', 'kilojoules', 'device_watts', 'has_heartrate', 'heartrate_opt_out', 'display_hide_heartrate_option', 'elev_high', 'elev_low', 'pr_count', 'total_photo_count', 'has_kudoed', 'suffer_score'])
 ```
 
-This looks promising, what I want to do now is to extract all of my activities into a pandas dataframe. I have around 5000 activities on Strava and after a bit of tinkering, I worked out that the activities endpoint allows a maximum of 200 results per page. Strava are pretty generous with their API limits and the 25 or so calls this would require should be no problem. With a few lines of Python, it's possible to pull all activities into a pandas dataframe.
+This looks promising, what I want to do now is to extract all of my activities into a pandas data frame. I have around 5000 activities on Strava and after a bit of tinkering, I worked out that the activities endpoint allows a maximum of 200 results per page. Strava are pretty generous with their API limits and the 25 or so calls this would require should be no problem. With a few lines of Python, it's possible to pull all activities into a pandas data frame.
 
 ```python
 activities = []
@@ -130,7 +130,7 @@ In [11]:
 df = pd.DataFrame(activities)
 ```
 
-That took a few minutes to run but seems to have done the trick. A quick call to the dataframe's describe method should show that the result set is sensible.
+That took a few minutes to run but seems to have done the trick. A quick call to the Data Frame's describe method should show that the result set is sensible.
 
 ```python
 df.describe()
@@ -147,7 +147,7 @@ df.describe()
     max	2.0	125033.000000	30065.000000	1.418130e+08	3877.500000	10.000000	4.038243e+09	4.321991e+09	46800.000000	60.180635	...	5520.000000	46.500000	267.900000	1890.700000	5174.800000	5167.000000	22.000000	6.000000	81.700000	34.000000
     8 rows × 26 columns
 
-One thing that's weird is that I know I've recorded activities in Australia and Poland pretty recently but neither appear. I'd also expect to see more from Germany and the UK given that's where I've been these last couple of years. It was simple enough to find an activity I recorded a while back in Sydney and to pull the relevant fields for it out of the dataframe.
+One thing that's weird is that I know I've recorded activities in Australia and Poland pretty recently but neither appear. I'd also expect to see more from Germany and the UK given that's where I've been these last couple of years. It was simple enough to find an activity I recorded a while back in Sydney and to pull the relevant fields for it out of the Data Frame.
 
 ```python
 df[df["id"] == 1363581034][
@@ -178,7 +178,7 @@ Loading formatted geocoded file...
       'admin2': 'Marrickville',
       'cc': 'AU'}]
 
-Ah good old Marrickville. The cc field contains the country code so I created a simple function that returns it based on the coordinates which I can then use to create a new column in the dataframe.
+Ah good old Marrickville. The cc field contains the country code so I created a simple function that returns it based on the coordinates which I can then use to create a new column in the Data Frame.
 
 ```python
 def reverse_geo(lat, long):
@@ -251,7 +251,7 @@ What about my longest cycling streak though? Each activity record contains the s
 df['date'] = pd.to_datetime(df['start_date_local']).dt.date
 ```
 
-What follows is a bit of a hack really but it seems to work. I've often read that as soon as you start looping over the rows in a dataframe, you're doing it all wrong but despite an attempt to search for a solution on Stack Overflow, I just thought I'd get on with my life. Essentially I dump the activity types and the dates into a new dataframe, order it then looping through while keeping track of the longest sequence of consecutive days represented.
+What follows is a bit of a hack really but it seems to work. I've often read that as soon as you start looping over the rows in a Data Frame, you're doing it all wrong but despite an attempt to search for a solution on Stack Overflow, I just thought I'd get on with my life. Essentially I dump the activity types and the dates into a new Data Frame, order it then looping through while keeping track of the longest sequence of consecutive days represented.
 
 ```python
 df2 = df[['type', 'date']].drop_duplicates(subset=None, keep='first', inplace=False)
