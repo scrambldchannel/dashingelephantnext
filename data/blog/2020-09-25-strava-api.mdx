@@ -136,16 +136,18 @@ That took a few minutes to run but seems to have done the trick. A quick call to
 df.describe()
 ```
 
-    resource_state	distance	moving_time	elapsed_time	total_elevation_gain	workout_type	id	upload_id	utc_offset	start_latitude	...	average_speed	max_speed	average_watts	kilojoules	elev_high	elev_low	pr_count	total_photo_count	average_cadence	average_temp
-    count	5066.0	5066.000000	5066.000000	5.066000e+03	5066.000000	1552.000000	5.066000e+03	4.980000e+03	5066.000000	4936.000000	...	5066.000000	5066.000000	1528.000000	1528.000000	4941.000000	4941.000000	5066.000000	5066.000000	65.000000	140.000000
-    mean	2.0	4541.564311	1473.547967	3.084665e+04	34.093368	9.860180	1.256097e+09	1.372523e+09	5858.349783	48.308615	...	5.082818	7.810561	93.123102	156.278796	209.658753	180.426938	0.239242	0.012041	70.827692	24.421429
-    std	0.0	7021.290615	1957.316323	1.992428e+06	98.093369	1.168758	6.851901e+08	7.205323e+08	5004.586086	11.306897	...	91.324773	4.522542	29.804492	209.327853	234.446950	219.778131	0.949467	0.148879	12.433919	5.351081
-    min	2.0	0.000000	0.000000	1.000000e+00	0.000000	0.000000	6.915503e+07	7.566196e+07	0.000000	-41.249047	...	0.000000	0.000000	0.000000	0.000000	-82.800000	-173.900000	0.000000	0.000000	24.100000	11.000000
-    25%	2.0	1509.950000	502.000000	6.352500e+02	0.000000	10.000000	9.238188e+08	1.023662e+09	3600.000000	47.555600	...	1.666000	4.000000	74.600000	45.700000	61.100000	34.200000	0.000000	0.000000	61.100000	20.000000
-    50%	2.0	2504.100000	861.000000	1.164000e+03	19.200000	10.000000	9.240612e+08	1.023916e+09	7200.000000	47.559062	...	3.414500	8.000000	92.000000	82.800000	262.000000	245.200000	0.000000	0.000000	76.700000	24.500000
-    75%	2.0	4818.100000	1705.500000	2.622000e+03	34.600000	10.000000	1.225273e+09	1.346240e+09	7200.000000	52.491187	...	4.627750	10.600000	110.625000	173.500000	275.400000	247.500000	0.000000	0.000000	79.300000	29.000000
-    max	2.0	125033.000000	30065.000000	1.418130e+08	3877.500000	10.000000	4.038243e+09	4.321991e+09	46800.000000	60.180635	...	5520.000000	46.500000	267.900000	1890.700000	5174.800000	5167.000000	22.000000	6.000000	81.700000	34.000000
-    8 rows × 26 columns
+```text
+resource_state	distance	moving_time	elapsed_time	total_elevation_gain	workout_type	id	upload_id	utc_offset	start_latitude	...	average_speed	max_speed	average_watts	kilojoules	elev_high	elev_low	pr_count	total_photo_count	average_cadence	average_temp
+count	5066.0	5066.000000	5066.000000	5.066000e+03	5066.000000	1552.000000	5.066000e+03	4.980000e+03	5066.000000	4936.000000	...	5066.000000	5066.000000	1528.000000	1528.000000	4941.000000	4941.000000	5066.000000	5066.000000	65.000000	140.000000
+mean	2.0	4541.564311	1473.547967	3.084665e+04	34.093368	9.860180	1.256097e+09	1.372523e+09	5858.349783	48.308615	...	5.082818	7.810561	93.123102	156.278796	209.658753	180.426938	0.239242	0.012041	70.827692	24.421429
+std	0.0	7021.290615	1957.316323	1.992428e+06	98.093369	1.168758	6.851901e+08	7.205323e+08	5004.586086	11.306897	...	91.324773	4.522542	29.804492	209.327853	234.446950	219.778131	0.949467	0.148879	12.433919	5.351081
+min	2.0	0.000000	0.000000	1.000000e+00	0.000000	0.000000	6.915503e+07	7.566196e+07	0.000000	-41.249047	...	0.000000	0.000000	0.000000	0.000000	-82.800000	-173.900000	0.000000	0.000000	24.100000	11.000000
+25%	2.0	1509.950000	502.000000	6.352500e+02	0.000000	10.000000	9.238188e+08	1.023662e+09	3600.000000	47.555600	...	1.666000	4.000000	74.600000	45.700000	61.100000	34.200000	0.000000	0.000000	61.100000	20.000000
+50%	2.0	2504.100000	861.000000	1.164000e+03	19.200000	10.000000	9.240612e+08	1.023916e+09	7200.000000	47.559062	...	3.414500	8.000000	92.000000	82.800000	262.000000	245.200000	0.000000	0.000000	76.700000	24.500000
+75%	2.0	4818.100000	1705.500000	2.622000e+03	34.600000	10.000000	1.225273e+09	1.346240e+09	7200.000000	52.491187	...	4.627750	10.600000	110.625000	173.500000	275.400000	247.500000	0.000000	0.000000	79.300000	29.000000
+max	2.0	125033.000000	30065.000000	1.418130e+08	3877.500000	10.000000	4.038243e+09	4.321991e+09	46800.000000	60.180635	...	5520.000000	46.500000	267.900000	1890.700000	5174.800000	5167.000000	22.000000	6.000000	81.700000	34.000000
+8 rows × 26 columns
+```
 
 One thing that's weird is that I know I've recorded activities in Australia and Poland pretty recently but neither appear. I'd also expect to see more from Germany and the UK given that's where I've been these last couple of years. It was simple enough to find an activity I recorded a while back in Sydney and to pull the relevant fields for it out of the Data Frame.
 
@@ -155,14 +157,18 @@ df[df["id"] == 1363581034][
 ]
 ```
 
-    name	location_country	start_latitude	start_longitude
-    1146	Last Sydney ride :(	Switzerland	-33.905934	151.159847
+```text
+name	location_country	start_latitude	start_longitude
+1146	Last Sydney ride :(	Switzerland	-33.905934	151.159847
+```
 
 OK, even if I'd given it an erroneous title, the lat/long fields clearly show it wasn't in Switzerland. At first I thought I'd messed up somehow when creating the datraframe but after some more spot testing, it seems the location_country field reflects where I was living at the time, not where I actually was. This seems to be a bit of a bug/limitation in the Strava API but given that the results include start and end coordinates it should be possible to derive the country using the starting position. Note, having lived so close to the French and German borders in Basel, this isn't entirely accurate but close enough for my purposes.
 
 There are a number of libraries to do reverse geocoding in Python. I could have used something like geopy to manage the use of an online service like OSM's Nominatum but I was curious to try out an offline method so tried out reverse-geocoder instead.
 
-    import reverse_geocoder as rg
+```python
+import reverse_geocoder as rg
+```
 
 The snippet below should return a result showing that the coordinates correspond to Australia.
 
@@ -171,12 +177,14 @@ rg.search((-33.905934,151.159847) )
 Loading formatted geocoded file...
 ```
 
-    [\{'lat': '-33.90318',
-      'lon': '151.15176',
-      'name': 'Marrickville',
-      'admin1': 'New South Wales',
-      'admin2': 'Marrickville',
-      'cc': 'AU'}]
+```text
+[{'lat': '-33.90318',
+  'lon': '151.15176',
+  'name': 'Marrickville',
+  'admin1': 'New South Wales',
+  'admin2': 'Marrickville',
+  'cc': 'AU'}]
+```
 
 Ah good old Marrickville. The cc field contains the country code so I created a simple function that returns it based on the coordinates which I can then use to create a new column in the Data Frame.
 
@@ -202,19 +210,24 @@ That looks more sensible, although it doesn't really give me a feel for how ofte
 df[df['type'] == "Ride"].groupby(['start_country']).count()["id"]
 ```
 
-    start_country
-    AU      47
-    CH    1930
-    DE     546
-    FR      18
-    GB     359
-    PL       3
-    Name: id, dtype: int64
+```text
+start_country
+AU      47
+CH    1930
+DE     546
+FR      18
+GB     359
+PL       3
+Name: id, dtype: int64
+```
 
 If I include all activity types, I get a slightly longer list. I even had to Google some of these country codes...
 
 ```python
 df.groupby(['start_country']).count()["id"]
+```
+
+```text
 Out[134]:
 start_country
 AT       1
