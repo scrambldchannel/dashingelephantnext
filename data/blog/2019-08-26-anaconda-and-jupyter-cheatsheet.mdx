@@ -7,15 +7,15 @@ tags: ["anaconda", "jupyter", "python", "linux"]
 
 ## Notes on using Anaconda
 
-Annoyed at often forgetting some of this, I thought I'd try to list bit sof my workflow here so that I could refer back to it in future.
+Annoyed at often forgetting some of this, I thought I'd try to document parts of my workflow here so that I could refer back to it in future.
 
 ## Which Conda? Or no Conda at all?
 
-Honestly, I fell into using Anaconda via a group project I joined a while back. I've used it sporadically since for stuff I want to do in Jupyter Notebooks. I've never really looked at alternatives (eg Miniconda, or using pip based solutions). For now, it's been nice to have a GUI, particularly on Windows, but on Linux I prefer to do stuff from the command line. That said, it's mostly meant I haven't had to think too much about it which has helped me get up and running. There is a good write up of what Conda is and isn't [here](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/)
+Honestly, I fell into using Anaconda via a group project I joined a while back. I've used it sporadically since for stuff I want to do in Jupyter Notebooks. I've never really looked at alternatives (eg Miniconda, or using pip based solutions). For now, it's been nice to have a GUI, particularly on Windows, but on Linux I prefer to do stuff from the command line. That said, it's mostly meant I haven't had to think too much about it which has helped me get up and running. There is a good write-up of what Conda is and isn't [here](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/)
 
 ### Installing Anaconda
 
-Just pull the latest installer from [their website](https://www.anaconda.com/download). Download the appropriate bundle for your OS and architecture and follow the installation instructions. I am exclusively using the 3.7 distribution and don't have any legacy code I depend on for my projects.
+Just pull the latest installer from [their website](https://www.anaconda.com/download). Download the appropriate bundle for your OS and architecture and follow the installation instructions. I am only using the 3.7 distribution and don't have any legacy code I depend on for my projects.
 
 Eg using Linux, wherever you've downloaded the installer (obviously change the filename to match whatever you've downloaded):
 
@@ -63,7 +63,7 @@ conda activate testenv
 
 ### Installing libraries
 
-Libraries can be installed with either conda or pip. As a basic rule, I search for them on conda first and install if available and install them via pip if not.
+Libraries can be installed with either conda or pip. As a basic rule, I search for them on conda first and install if available then install them via pip if not.
 
 #### Is it in the conda repos?
 
@@ -90,9 +90,9 @@ We don't need to look any further, just install it.
 conda install plotly
 ```
 
-##### It might not exist in the conda repo though
+##### It might not exist in the Conda repo though
 
-If you get a response like this, it's not available in the conda distribution you have.
+If you get a response like this, it's not available in the Conda distribution you have.
 
 ```bash
 conda search geoplotlib
@@ -128,7 +128,7 @@ conda deactivate
 
 ## Managing Jupyter kernels and conda environments
 
-I find it useful to create a single conda environment to launch jupyter notebooks from and leverage the ability to let them run kernels from other environments offered by installing ipykernel.
+I find it useful to create a single conda environment to launch Jupyter Notebooks from and leverage the ability to let them run kernels from other environments offered by installing ipykernel.
 
 ### Install ipykernel in our new env
 
@@ -170,11 +170,11 @@ jupyter notebook
 
 Eg navigate to [http://localhost:8888](http://localhost:8888 "your (probable) local server url")
 
-You should now be able to create a new notebook using a kernel from your new environment. From there you should be able to import all the libraries you've installed into the current environment from the running kernel.
+You should now be able to create a new notebook using a kernel from your new environment. From there you should be able to import all the libraries you've installed to the current environment from the running kernel.
 
 ## Using Notebooks
 
-A few notes on use of notebooks themselves.
+A few notes on using notebooks themselves.
 
 ### Useful key bindings
 
@@ -203,13 +203,13 @@ Ones I most for navigation.
 
 ### Using with Git
 
-#### Repo setup
+#### Repository setup
 
-I created a new empty repo on Github and cloned that locally and work there on notebook projects, committing completed projects back to Github and potentially moving bigger projects into their own repo or publishing certain notebooks to this blog.
+I created a new git repository with a project template that provides a consistent base to start from. I tend to work on different projects in separate branches which I merge into master once complete. Potentially, I'll move bigger projects into separate repositories.
 
 #### Gitignore
 
-I include this to ensure no checkpoints are included, useful if you iterate on the notebooks in the repo and don't want to inadvertently push private details back to Github. If you use the standard Python .gitignore from Github this will be included automatically.
+I include this to ensure no checkpoints are included, useful if you iterate on the notebooks in the repo and don't want to inadvertently push private details back to Github. If you use the [Python .gitignore from Github](https://github.com/github/gitignore/blob/main/Python.gitignore) this will be included automatically.
 
 ```
 .ipynb_checkpoints
@@ -235,7 +235,7 @@ I can then read it in from the notebook:
 import json
 
 with open('notebook_config.json') as config_file:
-    data = json.load(config_file)
+ data = json.load(config_file)
 
 key = data['SECRET_API_KEY']
 ```
