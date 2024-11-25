@@ -12,43 +12,45 @@ tags:
   - python
 ---
 
+## You should use pre-commit!
+
 I started using the [pre-commit](https://pre-commit.com/) framework a while back on my projects but only with a very basic setup on pretty simple codebases. Common uses are applying code formatters like [black](https://github.com/psf/black) or to run static type checking with [mypy](http://mypy-lang.org/).
 
-The cool thing about using them is that it reduces the noise in your repository by formatting your code, and flagging issues _before_ it gets committed. I'd previously tended to run tools like black sporadically but this just creates an extra, often quite large commit, that doesn't change the functionality of the code but just adds noise.
+The cool thing about using them is that they reduce the noise in your repository by formatting your code, and flagging issues _before_ it gets committed. I'd previously tended to run tools like black sporadically but this just creates an extra, often quite large commit, that doesn't change the functionality of the code but just adds noise.
 
-My initial setup was pretty basic and it was only when I started working with the Airflow codebase that I dove into them in more detail. If you look at the project's [.pre-commit-config.yaml](https://github.com/apache/airflow/blob/master/.pre-commit-config.yaml) file, it uses a huge number of hooks, including quite a few that call custom scripts. While I don't need anything that complicated, it made me realise I could do a bit more so I spent a bit of time trying to create a starting template I could role into new projects. I'm still tweaking but thought I'd scribble down this draft while the thinking behind it was fresh in my mind.
+My initial setup was pretty basic and it was only when I started working with the Airflow codebase that I dove into them in more detail. If you look at the project's [.pre-commit-config.yaml](https://github.com/apache/airflow/blob/master/.pre-commit-config.yaml) file, it uses a huge number of hooks, including quite a few that call custom scripts. While I don't need anything that complicated, it made me realise I could do a bit more so I spent a bit of time trying to create a starting template I could roll into new projects. I'm still tweaking but thought I'd scribble down this draft while the thinking behind it was fresh in my mind.
 
 ## How to setup pre-commit
 
 Pre-commit is written in Python and can be installed using pip:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 $ pip install pre-commit
 ```
 
 To use it in a project, run it in the root of the project's git repository:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 $ pre-commit install
 ```
 
 For it to do something, you need to define a configuration in a `.pre-commit-config.yaml` file. Out of the box, there's a command to send a sample config to stdout:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 $ pre-commit sample-config
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
-    hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-yaml
-    -   id: check-added-large-files
+ rev: v2.4.0
+ hooks:
+ -   id: trailing-whitespace
+ -   id: end-of-file-fixer
+ -   id: check-yaml
+ -   id: check-added-large-files
 ```
 
-The yaml above is fairly easy to understand, it has a link to a repo where the hook code is maintained, a specific version and the list of hooks you want to run and the names are pretty self-explanatory.
+The YAML above is fairly easy to understand, it has a link to a repo where the hook code is maintained, a specific version and the list of hooks you want to run and the names are pretty self-explanatory.
 
 ## Adding more hooks
 
@@ -64,21 +66,21 @@ In the words of the [project](https://github.com/PyCQA/isort) "isort your import
 - repo: https://github.com/pre-commit/mirrors-isort
   rev: v5.1.4
   hooks:
-    - id: isort
+ - id: isort
 ```
 
 ### Using black to format code
 
-I love black, I don't have any strong opinions on code style, I mainly just care that it's consistent. I certainly don't want to waste time ever arguing about it. Running black prior to every commit means that code is clean and consistent. It can be added as a hook like this:
+I love black, I don't have any strong opinions on code style, I mainly just care that it's consistent. I certainly don't want to waste time ever arguing about it. Running black prior to every commit means that your code is clean and consistent. It can be added as a hook like this:
 
 ```yaml
 - repo: https://github.com/ambv/black
   rev: stable
   hooks:
-    - id: black
+ - id: black
 ```
 
-Black ships with sensible defaults and I don't really want to change many things, or even really think about it that much. However, I do like to keep lines to a max of 80 characters. You can add configuration options for Black into your project's `pyproject.toml` file and tailored for the specific project. Here I override the line length, specify the python versions I'm targeting and exclude a few directories:
+Black ships with sensible defaults and I don't really want to change many things, or even really think about it that much. However, I do like to keep lines to a max of 80 characters. You can add configuration options for Black into your project's `pyproject.toml` file and tailor for the specific project. Here I override the line length, specify the Python versions I'm targeting and exclude a few directories:
 
 ```toml
 [tool.black]
@@ -88,14 +90,14 @@ include = '\.pyi?$'
 exclude = '''
 
 (
-  /(
-      \.eggs
-    | \.git
-    | \.mypy_cache
-    | _build
-    | build
-    | dist
-  )
+ /(
+ \.eggs
+ | \.git
+ | \.mypy_cache
+ | _build
+ | build
+ | dist
+ )
 )
 '''
 ```
@@ -108,30 +110,30 @@ For any new Python projects I start, I'm getting into the habit of adding type h
 - repo: https://github.com/pre-commit/mirrors-mypy
   rev: v0.782
   hooks:
-    - id: mypy
+ - id: mypy
 ```
 
 ### Style checks and basic linting with Flake8
 
-Although I'm using black to format the code, I've been playing around with using Flake8 in parallel for a couple of reasons. Firstly, it also does some linting of your code, flagging up unused imports for example which I find useful. I've also noticed that black doesn't seem to do anything about comment lines or long strings that breach the line length limit, flake8 will flag these. It can be added as a hook by adding the following yaml:
+Although I'm using black to format the code, I've been playing around with using Flake8 in parallel for a couple of reasons. Firstly, it also does some linting of your code, flagging up unused imports for example which I find useful. I've also noticed that black doesn't seem to do anything about comment lines or long strings that breach the line length limit, flake8 will flag these. It can be added as a hook by adding the following YAML:
 
 ```yaml
 - repo: https://gitlab.com/pycqa/flake8
   rev: 3.7.9
   hooks:
-    - id: flake8
+ - id: flake8
 ```
 
 One thing that black and flake8 couldn't agree on by default was whether or not to have a trailing space after the last comma in a list specified on a single line. That is, black wanted it to look like this:
 
 ```python
-    install_requires=["Click",],
+ install_requires=["Click",],
 ```
 
 But flake8 insisted it should look this and complained:
 
 ```python
-    install_requires=["Click", ],
+ install_requires=["Click", ],
 ```
 
 ```bash
@@ -172,10 +174,10 @@ $ pre-commit run --files app.py class.py
 
 It's also possible to run only a specific hook. The command below will apply black to all files, irrespective of whether they are staged:
 
-```bash{promptUser: "alex"}{promptHost: "thinky"}
+```bash
 $ pre-commit run black --all-files
 ```
 
 ## Conclusion
 
-I love the pre-commit framework and will use it on every new project from now on. I've dumped my setup into a [repo on github](https://github.com/scrambldchannel/python-pre-commit-template) which I'll continue to tinker with as it evolves.
+I love the pre-commit framework and have saved my setup for Python projects to [this repo](https://github.com/scrambldchannel/python-pre-commit-template). I'm going to use it by default on every new Python project going forward!
