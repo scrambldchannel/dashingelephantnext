@@ -14,11 +14,13 @@ draft: true # mark as draft until I can make this work
 > [!NOTE]
 > I've since moved away from Gridsome but am leaving this here for posterity.
 
+## Making code blocks even richer
+
 Having managed to get [syntax highlighting working in Gridsome](/syntax-highlighting-gridsome), I wanted to explore some of the extra features offered by [gridsome-plugin-remark-prismjs-all](https://gridsome.org/plugins/gridsome-plugin-remark-prismjs-all).
 
 The examples make it easy to enhance your code blocks with extra shiny stuff. Adding titles, line numbers and line highlighting to blocks is as simple as adding a bit of extra metadata.
 
-### Specify a language
+## Specify a language
 
 Obviously, a code block needs to know which language grammar to apply to the code.
 
@@ -31,7 +33,7 @@ output3 = ["Fizz", "", ""]
 output5 = ["Buzz", "", "", "", ""]
 
 for x in range(1, 101):
-    print "%s%s" % (output3[x % 3], output5[x % 5]) or x
+ print "%s%s" % (output3[x % 3], output5[x % 5]) or x
 print my_date.strftime('%d %A %a')
 ```
 ````
@@ -57,12 +59,12 @@ Use `codeTitle` to set a title for your code block:
 ````text
 ```html{codeTitle: "index.html"}
 <template>
-  <Layout>
-    <div>
-      <h1>Hello World</h1>
-    </div>
+ <Layout>
+ <div>
+ <h1>Hello World</h1>
+ </div>
 
-  </Layout>
+ </Layout>
 </template>
 ```
 ````
@@ -71,12 +73,12 @@ This will have a heading with the title you provide:
 
 ```html{codeTitle: "index.html"}
 <template>
-  <Layout>
-    <div>
-      <h1>Page Not Found</h1>
-    </div>
+ <Layout>
+ <div>
+ <h1>Page Not Found</h1>
+ </div>
 
-  </Layout>
+ </Layout>
 </template>
 ```
 
@@ -130,7 +132,7 @@ import VueFuse from 'vue-fuse'
 
 ### Line highlighting
 
-Here we can highlight lines by specifying individual lines and ranges which is useful if you want to draw attention to specific lines of code while retaining the context. You can specify a set of numbers or ranges
+Here we can highlight lines by specifying individual lines and ranges which is useful if you want to draw attention to specific lines of code while retaining the context. You can specify a set of numbers or ranges.
 
 ````text
 ```cpp{codeTitle: "supertux/src/badguy/badguy.cpp"}{numberLines: true}{1-2,16}
