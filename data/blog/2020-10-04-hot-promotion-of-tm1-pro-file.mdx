@@ -3,14 +3,17 @@ title: Creating a TI process from a .pro file using TM1py
 date: 2020-10-04
 summary: Ever wondered what's going on in your .pro files? I did so I tried to take one apart with Python and re-create it with TM1py...
 tags: ["python", "ti", "tm1", "cognos"]
+draft: true
 ---
 
 > [!NOTE]
 > I no longer work with TM1 nor is it likely I will again. I've left these posts here for posterity though.
 
-An [issue](https://github.com/cubewise-code/tm1py/issues/383) raised over at the TM1py project asked for a feature to add hot promotion of TM1 processes saved as pro files. The API allows creation of TI processes and TM1py provides some useful wrapper functions that can achieve this. However, the fiddly part was parsing a pro file to get the relevant information out to allow us to create an instance of the TM1py Process object.
+## Ever wanted to hot promote a TM1 pro file?
 
-### Exploring the pro file format
+An [issue](https://github.com/cubewise-code/tm1py/issues/383) raised over at the TM1py project asked for a feature to add hot promotion of TM1 processes saved as pro files. The API allows the creation of TI processes and TM1py provides some useful wrapper functions that can achieve this. However, the fiddly part was parsing a pro file to get the relevant information out to allow us to create an instance of the TM1py Process object.
+
+## Exploring the pro file format
 
 Pro files are saved as text so are human readable. As well as containing the code defined in the different tabs (prolog, metadata, data and epilog) the file contains metadata providing additional details about the file. For this example, I'm taking apart the [process to refresh feeders](https://github.com/cubewise-code/bedrock/blob/master/main/%7Dbedrock.cube.rule.processfeeders.pro) from the [Bedrock project](https://github.com/cubewise-code/bedrock).
 
@@ -97,7 +100,7 @@ pCube,"REQUIRED: Process feeders for this cube (Separated by Delimiter, Accepts 
 pDelim,"OPTIONAL: Delimiter (default value if blank = '&')"
 ```
 
-Next we get a whole lot of codes I haven't yet looked up that obviously don't have a great influence on this process. I suspect they pertain to the variable definitions for data coming from the data source. Since this process doesn't use a source, it makes sense that it would be blank.
+Next, we get a whole lot of codes I haven't yet looked up that obviously don't have a great influence on this process. I suspect they pertain to the variable definitions for data coming from the data source. Since this process doesn't use a source, it makes sense that it would be blank.
 
 ```text
 577,0
@@ -118,10 +121,10 @@ Now we get into the TI code itself. It is defined like any other multiline optio
 #Region CallThisProcess
 # A snippet of code provided as an example how to call this process should the developer be working on a system without access to an editor with auto-complete.
 If( 1 = 0 );
-    ExecuteProcess( '}bedrock.cube.rule.processfeeders', 'pLogOutput', pLogOutput,
-      'pStrictErrorHandling', pStrictErrorHandling,
-	    'pCube', '', 'pDelim', '&'
-    );
+ ExecuteProcess( '}bedrock.cube.rule.processfeeders', 'pLogOutput', pLogOutput,
+ 'pStrictErrorHandling', pStrictErrorHandling,
+ 'pCube', '', 'pDelim', '&'
+ );
 EndIf;
 #EndRegion CallThisProcess
 
@@ -208,7 +211,7 @@ There's still a bit at the end to cut through, but at least that's an overview o
 927,""
 ```
 
-### Parsing it in Python
+## Parsing it in Python
 
 I had a go at parsing a pro file. This is rough and a bit buggy but I got a PoC working. I tinkered around with this code and managed to identify all the multiline codes in all the Bedrock processes but there may be some more lurking, particularly in the codes that cover connection configurations which aren't covered in Bedrock.
 
@@ -225,41 +228,41 @@ multiline_codes_with_key = ['590','637']
 
 with open(file, encoding='utf-8-sig') as f:
 
-    process_dict = {}
-    in_multiline = False
-    in_multiline_with_key = False
-    code = ''
+ process_dict = {}
+ in_multiline = False
+ in_multiline_with_key = False
+ code = ''
 
     for line in f:
         if in_multiline:
-            process_dict[code].append(line.replace('"', '').rstrip())
-            lines = lines - 1
+ process_dict[code].append(line.replace('"', '').rstrip())
+ lines = lines - 1
             if lines == 0:
-                in_multiline = False
+ in_multiline = False
         elif in_multiline_with_key:
-            fields = line.split(',')
-            process_dict[code].append(fields[1].replace('"', '').rstrip())
-            lines = lines - 1
+ fields = line.split(',')
+ process_dict[code].append(fields[1].replace('"', '').rstrip())
+ lines = lines - 1
             if lines == 0:
-                in_multiline_with_key = False
+ in_multiline_with_key = False
         else:
-            fields = line.split(',')
-            code = fields[0]
+ fields = line.split(',')
+ code = fields[0]
             if code in multiline_codes:
-                lines = int(fields[1])
+ lines = int(fields[1])
                 if lines > 0:
-                    in_multiline = True
-                process_dict[code] = []
+ in_multiline = True
+ process_dict[code] = []
             elif code in multiline_codes_with_key:
-                lines = int(fields[1])
+ lines = int(fields[1])
                 if lines > 0:
-                    in_multiline_with_key = True
-                process_dict[code] = []
+ in_multiline_with_key = True
+ process_dict[code] = []
             else:
-                process_dict[code] = ''.join(fields[1:]).replace('"', '').rstrip()
+ process_dict[code] = ''.join(fields[1:]).replace('"', '').rstrip()
 ```
 
-### Create an instance of the Process class
+## Create an instance of the Process class
 
 From there, it's possible to create an instance of a TM1py `Process` object from the information grabbed for each process. I found it easier to use the built-in methods to create the parameters and variables.
 
@@ -296,33 +299,33 @@ my_new_process = TM1py.Objects.Process(
 for index, item in enumerate(process_dict['560']):
 
     if process_dict['561'][index] == "2":
-        parameter_type = "String"
-        value = process_dict['590'][index]
+ parameter_type = "String"
+ value = process_dict['590'][index]
     else:
-        parameter_type = "Numeric"
+ parameter_type = "Numeric"
         if process_dict['590'][index] == "":
-            value = 0
+ value = 0
         else:
-            value = float(process_dict['590'][index])
+ value = float(process_dict['590'][index])
 
-    my_new_process.add_parameter(
+ my_new_process.add_parameter(
         name=item,
         prompt=process_dict['637'][index],
         value=value,
         parameter_type=parameter_type
-    )
+ )
 
 for index, item in enumerate(process_dict['577']):
 
-    variable_type = "String" if process_dict['578'][index] == "2" else "Numeric"
+ variable_type = "String" if process_dict['578'][index] == "2" else "Numeric"
 
-    my_new_process.add_variable(
+ my_new_process.add_variable(
         name=item,
         variable_type=variable_type
-    )
+ )
 ```
 
-### Add to server
+## Add to server
 
 With a valid process object we should be able to create the process on the server:
 
@@ -337,9 +340,9 @@ config.read('config.ini')
 with TM1py.Services.TM1Service(**config['tm1srv01']) as tm1:
 
     if tm1.processes.exists(my_new_process.name):
-        tm1.processes.delete(my_new_process.name)
+ tm1.processes.delete(my_new_process.name)
 
-    response = tm1.processes.create(my_new_process)
+ response = tm1.processes.create(my_new_process)
 
     # check status of response
     print(response.status_code)
@@ -347,7 +350,7 @@ with TM1py.Services.TM1Service(**config['tm1srv01']) as tm1:
 
 This works smoothly and the process can now be found on the server. The parameters are intact and seem to have the right types and defaults.
 
-### Testing and known issues
+## Testing and known issues
 
 I did notice a couple of issues once I'd done a diff of the source file and the pro file created afterwards. A few differences were down to whitespace being stripped in the new version of the file. There were a couple of bugs though... Multiline parameters containing commas get truncated. I wasn't expecting this and my parsing code was naive as a result.
 More seriously, in some code blocks, my pretty naive parsing hasn't handled nested quotes. A robust solution would probably require using regular expressions or similar.
@@ -360,4 +363,4 @@ Note, the process ran successfully for a single cube but does fail when trying t
 
 So far, as a PoC, it shows that it can be done but needs some tweaking. Not every detail in the file is used to construct the new process so it's very likely that some legacy processes can't be created this way such as those created with the wizard or using the SAP connector. There are probably better solutions though, such as using TM1py to grab a process on a development server and push it to production.
 
-I was able to import all the latest Bedrock pro files and create them on the server but haven't actually tested them in depth. I also haven't tested it on with processes with ODBC data sources and think they might be problematic as I'm assuming there might be some more multiline options I haven't handled properly. So I wouldn't necessrily recommend it, but it's possible.
+I was able to import all the latest Bedrock pro files and create them on the server but haven't actually tested them in depth. I also haven't tested it on with processes with ODBC data sources and think they might be problematic as I'm assuming there might be some more multiline options I haven't handled properly. So I wouldn't necessarily recommend it, but it's possible.
