@@ -52,7 +52,7 @@ codespell................................................................Failed
 blog/2020-09-25-strava-api.md:223: BA ==> BY, BE
 ```
 
-Now the thing is, that is the ISO-3166 code for [Bosnia and Herzogovina](https://laendercode.net/en/2-letter-code/ba). Fun fact, I originally speled `Herzegovina` wrong and codespell was totally cool with that. None of the other country codes in that post were causing an issue and although I don't know enough about codespell, I suspect it was telling me that it thought I was trying to spell the words `by` and `be` rather than suggesting that I meant Belarus or Belgium. Codespell got even more annoyed with me after I started writing about it in this post!
+Now the thing is, that is the ISO-3166 code for [Bosnia and Herzogovina](https://laendercode.net/en/2-letter-code/ba). Fun fact, I originally spelled `Herzegovina` wrong and codespell was totally cool with that. None of the other country codes in that post were causing an issue and although I don't know enough about codespell, I suspect it was telling me that it thought I was trying to spell the words `by` and `be` rather than suggesting that I meant Belarus or Belgium. Codespell got even more annoyed with me after I started writing about it in this post!
 
 Anyway, I fiddled around a bit and got it to ignore those words. I think there are a number of ways to achieve it but the one that worked for was to pass an ignore file as an arg to the hook:
 
@@ -70,7 +70,7 @@ BA
         args: [-I, .codespellignore]
 ```
 
-Of course the downside is that I might end up misspelling `by` all the time but codespell is just a guard rail for obvious and common mistakes, I'm sure there are plenty of typos and grammatical mistakes on this site, I need something like Grammarly for vscode... That said, it just stopped me making this, somewhat meta, mistake:
+Of course, the downside is that I might end up misspelling `by` all the time but codespell is just a guardrail for obvious and common mistakes, I'm sure there are plenty of typos and grammatical mistakes on this site, I need something like Grammarly for vscode... That said, it just stopped me from making this, somewhat meta, mistake:
 
 ```
 codespell................................................................Failed
@@ -80,4 +80,6 @@ codespell................................................................Failed
 blog/2022-02-03-there-is-no-excuse-not-to-be-prettier.md:70: mispelling ==> misspelling
 ```
 
-Of course now I'm in a classic catch 22 situation because I can't put that output in this post without triggering a failure. I also don't really want to ignore it because, as I've just seen, it is exactly the kind of stupid mistake I would make! There's an [enhancement request](https://github.com/codespell-project/codespell/issues/1212) to support ignoring on a case by case basis but I imagine this is a pretty thorny problem to solve. I guess this is what `--no-verify` is for....
+Now I'm in a classic catch 22 situation because I can't put that output in this post without triggering a failure. I also don't really want to ignore it because, as I've just seen, it is exactly the kind of stupid mistake I would make!
+
+There's an [enhancement request](https://github.com/codespell-project/codespell/issues/1212) to support ignoring on a case by case basis but I imagine this is a pretty thorny problem to solve. I guess this is what `--no-verify` is for....
