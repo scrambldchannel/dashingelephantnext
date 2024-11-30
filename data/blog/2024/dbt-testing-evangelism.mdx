@@ -1,5 +1,5 @@
 ---
-title: Evangelising dbt testing
+title: Testing evangelism in dbt
 date: 2024-11-26
 summary: A few weeks back, I ran a workshop on testing in dbt at work. It covered the basics of using generic tests, looked at some of the more advanced tests offered by third party packages, and even covered custom test creation. Mostly though, I wanted to convince my colleagues that tests were cool. I thought I'd write about what worked and where people still needed convincing.
 draft: true
@@ -10,6 +10,12 @@ tags:
 
 ## Why testing in dbt is cool
 
-A few weeks back, I ran a workshop on testing in dbt at work. It covered the basics of using generic tests, looked at some of the more advanced tests offered by third party packages, and even covered custom test creation. Mostly though, I wanted to convince my colleagues that tests were cool. I thought I'd write about what worked and where people still needed convincing.
+A few weeks back, I ran a workshop on testing in dbt at work. It covered the basics of using generic tests, looked at some of the more advanced tests offered by third party packages, and even covered custom test creation. Mostly though, I wanted to convince my colleagues that tests were cool. I thought I'd write about what worked and where people still needed convincing. OK, maybe "cool" is going a bit too far but I wanted to convince some of my skeptical colleagues that writing tests for their models _helps_, rather than _hinders_, development.
 
-OK, maybe "cool" is going a bit too far but I wanted to convince some of my skeptical colleagues that writing tests for their models _helps_, rather than _hinders_, development. For a bit of background, we are around a year into our dbt journey and are currently maintaining almost 1500 models. 
+For a bit of background, we are around a year into our dbt journey and are currently maintaining almost 1500 models. So on average, we've been creating around 30 models a week. We've onboarded a large pool of analysts and engineers, most without any prior dbt experience. For many, even working with git is new. So although we've been able to deliver a lot of value to stakeholders, we've also accumulated considerable technical debt.
+
+So it's no surprise that we have relatively few tests in place. For me, this is quite troubling. Not only are potential data issues slipping through but there are no guard rails in place when changing models. 
+
+## Encouraging test adoption
+
+As part of our PR process, there is a checkbox asking developers whether they've added tests to their model(s). In practice, this hasn't really been enforced, a single `not_null` test has been placed on a column that doesn't really meaningfully test anything. To try to drive more test adoption, I've created a few basic patterns that my collagues should try to follow. These may seem obvious but they're an inprovement on where we are currently.
