@@ -1,0 +1,100 @@
+---
+title: Taking Linux Mint DE for a spin
+date: 2024-12-03
+summary: I'm a long time Debian user but have also been using Ubuntu and Mint for years now. In a previous job, I was able to opt for Linux on my work machine, but it had to be Ubuntu. Since then I'd been running stock Ubuntu on my personal machine too but the warnings about upgrading to 24.04 LTS, I decided to opt for Linux Mint Debian Edition. I thought I'd write about why, and also about how it went.
+draft: true
+tags:
+  - linux
+  - debian
+  - linux mint
+  - apt
+---
+
+## Why Linux Mint Debian Edition (LMDE)? 
+
+I'm a long-time user of Debian and its derivatives. A lot has changed since I first inserted a CD in my old Pentium desktop. To start with, it doesn't come on 7 CDs anymore. When Ubuntu first came along, I loved it. It offered the familiar Debian way of doing things with a smoother, more modern desktop experience. I've flirted with other distros over the years but have mostly used Linux Mint since the Rebecca release. 
+
+That changed a few years back when I had the luxury of using Linux on my company laptop. I could choose any distro I wanted, as long as it was Ubuntu LTS. To simplify things, I installed the same version of Ubuntu on my personal laptop. I've since changed jobs and have opted for a Mac (the lesser of two evils) but I hadn't felt the need to change from Jammy Jellyfish up until now.
+
+However, a few things started to bug me. I encountered a few bugs with the window management, especially when using an external monitor. I also suffered from sporadic crashes to Darktable it _felt_ like things were running slower than they should. All these niggles made the reminders to upgrade to Noble Numbat harder to ignore.
+
+To be fair to Ubuntu, I'm sure a clean install of Noble would have resolved things, an upgrade was overdue after all, but I was starting to get frustrated with a few other things and wanted to return to the cleaner, more elegant looks of Cinnamon.
+
+## Why LMDE and not Linux Mint then?
+
+
+There are lots of things I love about Debian-based distros but the principal one is APT. I've used RPM-based distros, as well as Homebrew on Mac, and even Chocolatey on Windows, but nothing _just works_ the way APT does. Granted, some of that is down to familiarity, I know how it works and where to find its configuration files, but I've also never had a problem with it.
+
+So Canonical's move to use Snaps, even when you `apt install` something, is something I would rather move away from. That said, I'm not a zealot, I want something that works more than I care about an ideology. If a particular piece of software I want could only be installed via a Snap (or a Flatpak etc), I wouldn't necessarily care that much. However, I want to avoid this extra complexity and bloat, to the extent I can. Still, I'd be lying if I didn't like using a community-driven distro if possible.
+
+Sure by using LMDE I'm tying myself to Debian's slower release cadence but I feel that this isn't that much of an issue, at least for me, in 2024. I want something I can rely on rather than needing all the latest bells and whistles. The only other benefit in the Ubuntu-based Mint would be the easier path to installing the proprietary Nvidia drivers. That's not relevant in my case though.
+
+## First impressions / steps
+
+Install went fine, everything looks nice and clean.
+
+I quickly did and apt update and an upgrade which took a little while but nothing crazy. I also took a look at the apt sources:
+
+```bash
+deb http://packages.linuxmint.com faye main upstream import backport #id:linuxmint_main
+
+deb https://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb https://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+deb http://security.debian.org bookworm-security main contrib non-free non-free-firmware
+
+deb https://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
+```
+
+I installed git, and vscode, mainly so that I could start writing this file! and chromium (I know)
+
+https://wiki.debian.org/VisualStudioCode
+
+## Installed pyenv
+
+https://github.com/pyenv/pyenv?tab=readme-ov-file#1-automatic-installer-recommended
+
+Remember to install the Python build dependencies of course - https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+
+I also installed the https://github.com/pyenv/pyenv-virtualenv plugin and set an initial virtual env using python 3.12.8 that will be generic 
+## Next steps
+
+I tend to create a catch all virtualenv that I use for generic analysis and experimentation. I will still create separate virtual environments for specific projects, but having a generic env lets me install a few things I might use again and again like ipykernel and pandas 
+
+## docker
+
+I installed docker from the debian repositories rather than following docker's instructions to use their repos. My docker use mostly involves being able to spin up various databases in containers, or ocassionally running something like airflow, and I want to stick the standard debian sources unless I need .something more bleeding edge
+
+## nvm
+
+I don't do much js development but I do some work on a few different sites (including this one) that are deployed via platforms like Netlify. So it is useful to be able to run different node versions in parallel rather via nvm rather than using the the debian node packages. 
+
+
++ nvm and/or npx 
+
+## Slack
+
+https://slack.com/intl/en-gb/downloads/linux
+
+I downloaded the deb file and installed with:
+
+```bash
+sudo apt install ./slack-desktop-4.41.98-amd64.deb
+```
+
+Although Slack provide the package, they don't host it in an apt repository as far as  I can tell. So to upgrade, I'd need to go back and download again which is less than ideal.
+
+Similarly, discord offers a deb or a gzipped binary on their downloads page - 
+
+```bash
+discord-0.0.77.deb
+```
+
+## Darktable
+
+I use Darktable for photo editing and had previously been relying on an Ubuntu PPA package for reasons I can't even remember. The version in Debian stable is currently 4.2.1 
+
++ Darktable
+
+
+
++ nordvpn
