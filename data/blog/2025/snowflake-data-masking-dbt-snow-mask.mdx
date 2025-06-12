@@ -1,0 +1,258 @@
+---
+title: Implementing Snowflake Data Masking in dbt with snow-mask
+date: 2025-06-12
+summary: We had a need to apply data masking to a significant number of tables in our Snowflake warehouse. So I went looking for a solution that we could use within our dbt project. The snow-mask package provides a simple solution for implementing data masking in Snowflake through dbt but there are a few gotchas. I though I'd outline our initial implementation and the challenges we faced.
+tags:
+  - dbt
+  - snowflake
+  - security
+---
+
+## Why Data Masking Matters
+
+In today's regulatory landscape, protecting sensitive data is not just good practice—it's often a legal requirement. Whether you're dealing with PII, financial data, or healthcare information, ensuring that sensitive data is properly masked for non-production environments and restricted users is crucial.
+
+Snowflake provides robust data masking capabilities through its dynamic data masking features, but implementing and managing these policies across a large dbt project can be complex. This is where the [snow-mask package](https://github.com/entechlog/dbt-snow-mask) comes in, providing a dbt-native approach to implementing data masking policies.
+
+## What is snow-mask?
+
+The `snow-mask` package is a dbt package that simplifies the implementation of Snowflake's dynamic data masking features. It provides:
+
+- **Declarative masking policies**: Define masking rules in YAML configuration
+- **Multiple masking functions**: Support for various masking techniques (nullify, hash, partial masking, etc.)
+- **Role-based access**: Control which roles see masked vs. unmasked data
+- **Easy maintenance**: Centralized policy management through dbt
+
+## Installation
+
+To get started with snow-mask, add it to your `packages.yml` file:
+
+```yaml
+packages:
+  - package: entechlog/dbt_snow_mask
+    version: 1.5.0
+```
+
+Then run `dbt deps` to install the package.
+
+## Basic Configuration
+
+The package uses a YAML configuration file to define masking policies. Create a file called `snow_mask_meta.yml` in your project root:
+
+```yaml
+version: 2
+
+masking_policy:
+  - name: "email_mask"
+    data_type: "varchar"
+    masking_expression: |
+      case
+        when current_role() in ('ANALYST_ROLE', 'DEV_ROLE') then 
+          regexp_replace(val, '.+\@', '*****@')
+        else val
+      end
+    
+  - name: "phone_mask"
+    data_type: "varchar"
+    masking_expression: |
+      case
+        when current_role() in ('ANALYST_ROLE', 'DEV_ROLE') then 
+          regexp_replace(val, '\d', '*')
+        else val
+      end
+      
+  - name: "ssn_mask"
+    data_type: "varchar"
+    masking_expression: |
+      case
+        when current_role() in ('ANALYST_ROLE', 'DEV_ROLE') then 
+          'XXX-XX-' || right(val, 4)
+        else val
+      end
+```
+
+## Applying Masking Policies to Models
+
+Once you've defined your masking policies, you can apply them to specific columns in your dbt models using the `meta` configuration:
+
+```sql
+-- models/customers.sql
+{{ config(
+    materialized='table',
+    meta={
+      'masking_policy': {
+        'email': 'email_mask',
+        'phone': 'phone_mask',
+        'ssn': 'ssn_mask'
+      }
+    }
+) }}
+
+select
+    customer_id,
+    customer_name,
+    email,
+    phone,
+    ssn,
+    created_at
+from {{ source('raw', 'customers') }}
+```
+
+## Running the Masking Operations
+
+After configuring your models, you need to run the snow-mask operations to create and apply the masking policies:
+
+```bash
+# Create the masking policies in Snowflake
+dbt run-operation create_masking_policy
+
+# Apply masking policies to your models
+dbt run-operation apply_masking_policy --args '{models: [customers]}'
+
+# Or apply to all models with masking policies
+dbt run-operation apply_masking_policy
+```
+
+## Advanced Features
+
+### Conditional Masking
+
+You can create more sophisticated masking rules based on multiple conditions:
+
+```yaml
+- name: "conditional_salary_mask"
+  data_type: "number"
+  masking_expression: |
+    case
+      when current_role() in ('HR_ROLE', 'FINANCE_ROLE') then val
+      when current_role() in ('MANAGER_ROLE') then 
+        case when val > 100000 then 'High' else 'Standard' end
+      else null
+    end
+```
+
+### Custom Masking Functions
+
+The package supports various built-in masking functions, but you can also create custom ones:
+
+```yaml
+- name: "credit_card_mask"
+  data_type: "varchar"
+  masking_expression: |
+    case
+      when current_role() in ('PAYMENT_ADMIN') then val
+      else '**** **** **** ' || right(val, 4)
+    end
+```
+
+### Environment-Specific Policies
+
+You can configure different masking behaviors for different environments:
+
+```yaml
+- name: "env_aware_mask"
+  data_type: "varchar"
+  masking_expression: |
+    case
+      when '{{ target.name }}' = 'prod' and current_role() not in ('ADMIN_ROLE') then '***MASKED***'
+      when '{{ target.name }}' in ('dev', 'staging') then '***MASKED***'
+      else val
+    end
+```
+
+## Best Practices
+
+### 1. Start with High-Risk Data
+
+Begin by identifying and masking your most sensitive data types:
+- Personal identifiers (SSN, passport numbers)
+- Financial information (credit cards, bank accounts)
+- Contact information (emails, phone numbers)
+- Healthcare data (medical record numbers)
+
+### 2. Test Thoroughly
+
+Always test your masking policies in a development environment first:
+
+```bash
+# Test in dev environment
+dbt run --target dev
+dbt run-operation apply_masking_policy --target dev
+
+# Verify masking is working as expected
+dbt test --target dev
+```
+
+### 3. Document Your Policies
+
+Maintain clear documentation of your masking policies and which roles have access to unmasked data:
+
+```yaml
+# In your model YAML
+models:
+  - name: customers
+    description: "Customer data with PII masking policies applied"
+    columns:
+      - name: email
+        description: "Customer email (masked for non-admin roles)"
+        meta:
+          masking_policy: "email_mask"
+          unmasked_roles: ["ADMIN_ROLE", "SUPPORT_LEAD"]
+```
+
+### 4. Monitor and Audit
+
+Regularly review your masking policies and audit who has access to unmasked data:
+
+```sql
+-- Query to check applied masking policies
+show masking policies;
+
+-- Check which tables have masking policies applied
+select * from information_schema.policy_references
+where policy_kind = 'MASKING_POLICY';
+```
+
+## Troubleshooting Common Issues
+
+### Policy Already Exists
+
+If you encounter errors about policies already existing, you can drop and recreate them:
+
+```bash
+dbt run-operation drop_masking_policy
+dbt run-operation create_masking_policy
+```
+
+### Permission Errors
+
+Ensure your dbt service account has the necessary privileges:
+
+```sql
+-- Grant necessary privileges to dbt role
+grant create masking policy on schema <schema_name> to role <dbt_role>;
+grant apply masking policy on account to role <dbt_role>;
+```
+
+### Testing Masked Data
+
+When writing dbt tests for masked columns, remember that the tests will see masked values in non-admin roles:
+
+```yaml
+tests:
+  - name: masked_email_format
+    description: "Ensure masked emails follow expected pattern"
+    sql: |
+      select count(*) 
+      from {{ ref('customers') }} 
+      where email like '*****@%'
+      and current_role() in ('ANALYST_ROLE')
+```
+
+## Conclusion
+
+The snow-mask package provides a powerful, dbt-native approach to implementing data masking in Snowflake. By integrating masking policies directly into your dbt workflow, you can ensure that sensitive data protection is built into your data pipeline from the ground up.
+
+The declarative approach makes it easy to maintain and audit your masking policies, while the role-based access controls provide the flexibility needed in complex organizational structures. As data privacy regulations continue to evolve, having robust masking capabilities in place is not just beneficial—it's essential.
+
+Start small with your most sensitive data, test thoroughly, and gradually expand your masking policies as you become more comfortable with the tooling. Your data governance team (and your legal department) will thank you. 
