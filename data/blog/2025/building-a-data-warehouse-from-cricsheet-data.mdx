@@ -1,0 +1,63 @@
+---
+title: Building a data warehouse from the Cricsheet data (1/n)
+date: 2025-08-11
+summary: A hobbyist project to ingest and process cricket data from Cricsheet.org using dbt and Clickhouse for analysis
+tags: ["cricket","cricsheet", "dbt", "clickhouse", "data-engineering"]
+draft: true
+---
+
+## The Project
+
+I'm working on a new hobbyist project that involves ingesting and processing the comprehensive cricket data available at [Cricsheet.org](https://cricsheet.org/). This is an exciting opportunity to work with a rich dataset that covers international cricket, T20 leagues, and domestic competitions going back to 2001.
+
+## What is Cricsheet?
+
+[Cricsheet](https://cricsheet.org/) provides freely-available structured data for cricket, including:
+
+- **Ball-by-ball match data** for 19,764+ matches
+- Coverage of Test matches, ODIs, T20Is, and various domestic leagues
+- Data spanning from 2001 (men) and 2003 (women)
+- **Register data** with 17,305+ people and 26,896+ identifiers from 12 sources
+
+The dataset covers everything from international fixtures to major domestic competitions like the Indian Premier League, Big Bash League, County Championship, and many more.
+
+## The Technical Stack
+
+For this project, I'm planning to use:
+
+- **dbt (data build tool)** for data transformation and modeling
+- **Clickhouse** as the analytical database
+- The structured data formats provided by Cricsheet for ingestion
+
+## Why This Combination?
+
+**dbt** will allow me to:
+- Transform the raw cricket data into clean, analytical models
+- Maintain data lineage and documentation
+- Version control my data transformations
+- Create reusable models for different types of analysis
+
+**Clickhouse** offers:
+- Excellent performance for analytical queries
+- Efficient storage for time-series data (perfect for match events)
+- Good support for JSON data (useful for the ball-by-ball details)
+
+## What I Hope to Achieve
+
+This project will give me hands-on experience with:
+- Building a complete data pipeline from raw data to analytical models
+- Working with sports data and time-series analysis
+- Implementing dbt best practices in a real-world scenario
+- Creating insights from cricket statistics
+
+## Next Steps
+
+The immediate plan is to:
+1. Set up the Clickhouse instance
+2. Configure dbt for Clickhouse
+3. Start with a small subset of data to validate the approach
+4. Build initial models for match summaries and player statistics
+
+I'm looking forward to sharing the progress and insights as this project develops. Cricket data analysis has always fascinated me, and having access to such comprehensive data through Cricsheet is a fantastic opportunity to explore the intersection of sports and data engineering.
+
+Stay tuned for updates on the data models, interesting findings, and lessons learned along the way!
