@@ -1,14 +1,15 @@
 ---
 title: Building a data warehouse from the Cricsheet data (1/n)
 date: 2025-08-11
-summary: A hobbyist project to ingest and process cricket data from Cricsheet.org using dbt and Clickhouse for analysis
-tags: ["cricket","cricsheet", "dbt", "clickhouse", "data-engineering"]
+summary: I've been looking into doing something with the Crichsset data for a while now. Despite a few fits and bursts, I've not documented anything so far aside from an old git repository that I've left unloved for a while now. I've been digging through it though, and I want to reboot it and document my progress here. I also want to an excuse to play with some shiny new toys! This won't necessarily a good place to read about good practices, but I'm hoping to leave an audit trail of the pragmatic compromises I've made while I focus on getting stuff to work, and learning as I go. 
+tags: ["cricket","cricsheet", "dbt", "clickhouse", "data-engineering", "sqlmesh", "python"]
 draft: true
 ---
 
 ## The Project
 
-I'm working on a new hobbyist project that involves ingesting and processing the comprehensive cricket data available at [Cricsheet.org](https://cricsheet.org/). This is an exciting opportunity to work with a rich dataset that covers international cricket, T20 leagues, and domestic competitions going back to 2001.
+ I've been looking into doing something with the Crichsset data for a while now. Despite a few fits and bursts, I've not documented anything so far aside from an old git repository that I've left unloved for a while now. I've been digging through it though, and I want to reboot it and document my progress here. I also want to an excuse to play with some shiny new toys! This won't necessarily a good place to read about good practices, but I'm hoping to leave an audit trail of the pragmatic compromises I've made while I focus on getting stuff to work, and learning as I go. 
+
 
 ## What is Cricsheet?
 
@@ -23,24 +24,131 @@ The dataset covers everything from international fixtures to major domestic comp
 
 ## The Technical Stack
 
-For this project, I'm planning to use:
+For this project, I'm using:
 
+- **Clickhouse** as the analytical database (running via Docker Compose)
 - **dbt (data build tool)** for data transformation and modeling
-- **Clickhouse** as the analytical database
+- **SQLMesh** for additional data orchestration capabilities
 - The structured data formats provided by Cricsheet for ingestion
 
+## What I've Built So Far
+
+### Database Setup
+
+Initially I spun up a Postgres instance but decided to switch to Clickhouse, mainly because I'd been looking for an excuse to play with it for a while now. I created a basic docker compose definition which makes it easy to spin up and tear down for development:
+
+```
+services:
+
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    restart: always
+    ports:
+      - 8123:8123  # HTTP interface
+      - 9000:9000  # Native TCP interface
+      - 9009:9009  # HTTP interface for secure connections
+    environment:
+      CLICKHOUSE_DB: cricket
+      CLICKHOUSE_USER: cricket
+      CLICKHOUSE_PASSWORD: cricket
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+volumes:
+  clickhouse_data:
+  clickhouse_logs:
+```
+
+### Data Ingestion
+
+I've successfully loaded two main datasets:
+
+**Matches Data**: Downloaded the JSON format of Cricsheet's [matches](https://cricsheet.org/matches/) offering and combined it into a single JSONL file using a Python script. The data is loaded into Clickhouse using the `JSONEachRow` format, which handles the nested structure of cricket match data efficiently.
+
+Here's the process I followed:
+
+First, I copied the combined JSON file to the container:
+```sh
+docker cp combined.json clickhouse_clickhouse_1:/tmp/
+```
+
+Then I created the table manually through the Clickhouse UI:
+```sql
+CREATE TABLE IF NOT EXISTS raw_cricsheet.matches (file_name String, data JSON) ENGINE = MergeTree() ORDER BY file_name
+```
+
+Finally, I loaded the data via the Clickhouse CLI:
+```sh
+clickhouse-client --user cricket --password cricket --database raw_cricsheet --query "INSERT INTO matches FORMAT JSONEachRow" < /tmp/combined.json
+```
+
+**Register Data**: The [register](https://cricsheet.org/register/) of people involved in cricket helps map between different identifiers used by sites like Cricinfo, Cricbuzz, and others. This CSV data is loaded into a structured table with columns for each identifier source.
+
+Here's the process I followed:
+
+First, I copied the CSV file to the container:
+```sh
+docker cp people.csv clickhouse_clickhouse_1:/tmp/
+```
+
+Then I created the table with the full schema:
+```sql
+CREATE TABLE raw_cricsheet.people (
+    identifier String,
+    name String,
+    unique_name String,
+    key_bcci String,
+    key_bcci_2 String,
+    key_bigbash String,
+    key_cricbuzz String,
+    key_cricheroes String,
+    key_crichq String,
+    key_cricinfo String,
+    key_cricinfo_2 String,
+    key_cricingif String,
+    key_cricketarchive String,
+    key_cricketarchive_2 String,
+    key_cricketworld String,
+    key_nvplay String,
+    key_nvplay_2 String,
+    key_opta String,
+    key_opta_2 String,
+    key_pulse String,
+    key_pulse_2 String
+)
+ENGINE = MergeTree
+ORDER BY identifier;
+```
+
+Finally, I loaded the data:
+```sh
+clickhouse-client --user cricket --password cricket --database raw_cricsheet --query "INSERT INTO matches FORMAT JSONEachRow" < /tmp/combined.json
+```
+
+### Table Structure
+
+I'm using Clickhouse's `MergeTree` engine by default, though I'm aware there are more sophisticated alternatives available. This is a good example of the configuration complexity Clickhouse offers - something I'm learning about as I go.
+
 ## Why This Combination?
+
+**Clickhouse** offers:
+- Excellent performance for analytical queries
+- Efficient storage for time-series data (perfect for match events)
+- Good support for JSON data (useful for the ball-by-ball details)
+- Docker-based setup for easy development
 
 **dbt** will allow me to:
 - Transform the raw cricket data into clean, analytical models
 - Maintain data lineage and documentation
 - Version control my data transformations
 - Create reusable models for different types of analysis
-
-**Clickhouse** offers:
-- Excellent performance for analytical queries
-- Efficient storage for time-series data (perfect for match events)
-- Good support for JSON data (useful for the ball-by-ball details)
 
 ## What I Hope to Achieve
 
@@ -49,14 +157,15 @@ This project will give me hands-on experience with:
 - Working with sports data and time-series analysis
 - Implementing dbt best practices in a real-world scenario
 - Creating insights from cricket statistics
+- Learning Clickhouse's advanced features and optimization techniques
 
 ## Next Steps
 
 The immediate plan is to:
-1. Set up the Clickhouse instance
-2. Configure dbt for Clickhouse
-3. Start with a small subset of data to validate the approach
-4. Build initial models for match summaries and player statistics
+1. Set up dbt for Clickhouse integration
+2. Start building transformation models for the raw data
+3. Create initial analytical models for match summaries and player statistics
+4. Explore Clickhouse's more advanced table engines and optimization options
 
 I'm looking forward to sharing the progress and insights as this project develops. Cricket data analysis has always fascinated me, and having access to such comprehensive data through Cricsheet is a fantastic opportunity to explore the intersection of sports and data engineering.
 
